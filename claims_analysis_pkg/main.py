@@ -15,16 +15,16 @@ dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
 os.chdir(dname)
 
 from claims_analysis_pkg.src.constants import THREADS
-from claims_analysis_pkg.src.constants import OPENAI_API_KEY
+# from claims_analysis_pkg.src.constants import OPENAI_API_KEY
 # CLAIMS_DIR = "claims/"
 # OUTPUTS_DIR = "outputs/"
 # LOGS_DIR = "logs/"
 
 # Setup API key
 load_dotenv()
-# openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-openai.api_key = OPENAI_API_KEY
+# openai.api_key = OPENAI_API_KEY
 
 @log_timer
 def process_single_claim(claim_path: str) -> tuple[list[Violation], ClaimSummary]:
