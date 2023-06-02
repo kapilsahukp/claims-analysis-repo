@@ -5,16 +5,16 @@ import openai
 import pandas as pd
 from dotenv import load_dotenv
 
-from src.page_processing import Violation, process_claim_pages
-from src.summarization import ClaimSummary, summarize_results
-from src.utils import log_timer, read_claim, setup_logging
+from claims_analysis_pkg.src.page_processing import Violation, process_claim_pages
+from claims_analysis_pkg.src.summarization import ClaimSummary, summarize_results
+from claims_analysis_pkg.src.utils import log_timer, read_claim, setup_logging
 
 # ksahu added to make sure it sets neptune as root directory
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
 os.chdir(dname)
 
-from src.constants import THREADS
+from claims_analysis_pkg.src.constants import THREADS
 # CLAIMS_DIR = "claims/"
 # OUTPUTS_DIR = "outputs/"
 # LOGS_DIR = "logs/"
