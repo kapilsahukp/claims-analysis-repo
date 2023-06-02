@@ -18,8 +18,12 @@ setuptools.setup(
     project_urls = {                                # Optional
         "Bug Tracker": "https://github.com/kapilsahukp/claims-analysis-repo/issues"
     },
-    install_requires=["python-dotenv", "openai", "langchain", "pandas", "pandas-stubs", "ipykernel", "pypdf"],                  # list all packages that your package uses
-    keywords=["pypi", "mikes_toolbox", "tutorial"], #descriptive meta-data
+    install_requires=["python-dotenv==1.0.0",
+                      "openai>=0.27",
+                      "langchain>=0.0.170",
+                      "pandas", "pandas-stubs",
+                      "ipykernel", "pypdf"
+                      ],                  # list all packages that your package uses
     classifiers=[                                   # https://pypi.org/classifiers
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

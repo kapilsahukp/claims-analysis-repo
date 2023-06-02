@@ -11,7 +11,7 @@ from src.utils import log_timer, read_claim, setup_logging
 
 # ksahu added to make sure it sets claims-analysis as root directory
 abspath = os.path.abspath(__file__)
-dname = os.path.dirname(os.path.dirname(abspath))
+dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
 os.chdir(dname)
 
 from src.constants import THREADS
