@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 
+# Added API key:
+OPENAI_API_KEY = "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"
+
 # Number of threads to be used for parallel processing
 THREADS = 8
 
