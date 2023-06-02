@@ -21,8 +21,8 @@ from claims_analysis_pkg.src.constants import THREADS
 # LOGS_DIR = "logs/"
 
 # Setup API key
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# load_dotenv()
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # openai.api_key = OPENAI_API_KEY
 
@@ -55,12 +55,13 @@ def process_single_claim(claim_path: str) -> tuple[list[Violation], ClaimSummary
 
 
 @log_timer
-def main(run_id: str, claims_dir: str, logs_dir: str, outputs_dir: str, claim_paths: list[str] = []) -> None:
+def main(run_id: str, open_api_key: str, claims_dir: str, logs_dir: str, outputs_dir: str, claim_paths: list[str] = []) -> None:
     """
     Processes a list of claims and outputs their entries and summaries to csv files.
     If none are provided then we run on all .pdf files in the claims directory.
     """
 
+    openai.api_key = open_api_key
     CLAIMS_DIR = claims_dir
     OUTPUTS_DIR = logs_dir
     LOGS_DIR = outputs_dir
@@ -92,6 +93,7 @@ def main(run_id: str, claims_dir: str, logs_dir: str, outputs_dir: str, claim_pa
 if __name__ == "__main__":
     main(
         run_id="initial_test",
+        open_api_key="",
         claims_dir="ksahu_claims/",  # added by kapil
         logs_dir="ksahu_outputs/",  # added by kapil
         outputs_dir="ksahu_logs/",  # added by kapil
