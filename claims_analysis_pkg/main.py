@@ -9,7 +9,7 @@ from src.page_processing import Violation, process_claim_pages
 from src.summarization import ClaimSummary, summarize_results
 from src.utils import log_timer, read_claim, setup_logging
 
-# ksahu added to make sure it sets claims-analysis as root directory
+# ksahu added to make sure it sets neptune as root directory
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
 os.chdir(dname)
