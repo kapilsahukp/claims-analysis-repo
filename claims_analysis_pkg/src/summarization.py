@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 
-from src.constants import SUMMARIZATION_PROMPT
-from src.page_processing import Violation
+from claims_analysis_pkg.src.constants import SUMMARIZATION_PROMPT
+from claims_analysis_pkg.src.page_processing import Violation
 
 
 @dataclass

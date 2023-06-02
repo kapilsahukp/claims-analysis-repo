@@ -7,14 +7,14 @@ from typing import Optional
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
-from src.constants import (
+from claims_analysis_pkg.src.constants import (
     ALL_VIOLATION_TYPES,
     GLOBAL_EXCLUDED_KEYWORDS,
     PAGE_PROCESSING_TEMPLATE,
     YES_DELIMITER,
     ViolationType,
 )
-from src.utils import words_exist_in_text
+from claims_analysis_pkg.src.utils import words_exist_in_text
 
 
 @dataclass
