@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='src',                           # should match the package folder
-    packages=['claims_analysis_pkg'],                     # should match the package folder
+    packages=['claims_analysis_pkg', 'claims_analysis_pkg.src'],                     # should match the package folder
     version='0.0.1',                                # important for updates
     license='MIT',                                  # should match your chosen license
     description='Testing installation of Package',
