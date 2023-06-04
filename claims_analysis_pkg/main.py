@@ -15,12 +15,16 @@ from claims_analysis_pkg.src.utils import log_timer, read_claim, setup_logging
 
 # ksahu added to make sure it sets neptune as root directory
 abspath = os.path.abspath(__file__)
-dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
-os.chdir(dname)
-print(dname)
+# dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
+# os.chdir(dname)
+print("abspath : ",abspath)
+
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+print("root : ", ROOT_DIR)
 
 # from src.constants import THREADS
 from claims_analysis_pkg.src.constants import THREADS
+
 # from claims_analysis_pkg.src.constants import OPENAI_API_KEY
 # CLAIMS_DIR = "claims/"
 # OUTPUTS_DIR = "outputs/"
@@ -78,7 +82,7 @@ def main(run_id: str, open_api_key: str, claims_dir: str, logs_dir: str, outputs
 
     # Get list of all claims in claims directory if paths are not explicitly provided
     if not claim_paths:
-        claim_paths = [file for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
+        claim_paths = ['/'.join([CLAIMS_DIR, file]) for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
     logging.info(f"All claims to be processed: {claim_paths}.")
 
     all_violations: list[Violation] = []
@@ -100,11 +104,12 @@ if __name__ == "__main__":
     main(
         run_id="initial_test",
         open_api_key="",
-        claims_dir="ksahu_claims/",  # added by kapil
-        logs_dir="ksahu_outputs/",  # added by kapil
-        outputs_dir="ksahu_logs/",  # added by kapil
+        claims_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims",  # added by kapil
+        # claims_dir="ksahu_claims/",  # added by kapil
+        logs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_outputs/",  # added by kapil
+        outputs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_logs/",  # added by kapil
         claim_paths=[
-            "ksahu_claims/4_956635_Doc1.pdf"
+            "../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims/4_956635_Doc1.pdf" # ../../../../../ksahu_claims
             # ,  # Expect to see patio mention on page 11
             # "claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
             # "claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
