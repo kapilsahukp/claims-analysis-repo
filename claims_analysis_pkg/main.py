@@ -30,8 +30,10 @@ from claims_analysis_pkg.src.constants import THREADS
 # OUTPUTS_DIR = "outputs/"
 # LOGS_DIR = "logs/"
 
+env_path = os.path.dirname(__file__)
+print("env path : ", env_path)
 # Setup API key
-load_dotenv()
+load_dotenv(env_path)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # openai.api_key = OPENAI_API_KEY
