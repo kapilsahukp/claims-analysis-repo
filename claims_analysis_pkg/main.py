@@ -80,16 +80,16 @@ def process_single_claim(claim_path: str) -> tuple[list[Violation], ClaimSummary
 
 
 @log_timer
-def main(run_id: str, open_api_key: str, claims_dir: str, logs_dir: str, outputs_dir: str, claim_paths: list[str] = []) -> None:
+def main(run_id: str, claim_paths: list[str] = []) -> None:
     """
     Processes a list of claims and outputs their entries and summaries to csv files.
     If none are provided then we run on all .pdf files in the claims directory.
     """
 
     # openai.api_key = open_api_key
-    CLAIMS_DIR = claims_dir
-    OUTPUTS_DIR = logs_dir
-    LOGS_DIR = outputs_dir
+    CLAIMS_DIR = config.get("Parameters", "CLAIMS_DIR")
+    OUTPUTS_DIR = config.get("Parameters", "LOGS_DIR")
+    LOGS_DIR = config.get("Parameters", "OUTPUTS_DIR")
 
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
@@ -118,10 +118,10 @@ def main(run_id: str, open_api_key: str, claims_dir: str, logs_dir: str, outputs
 if __name__ == "__main__":
     main(
         run_id="initial_test",
-        open_api_key="",
-        claims_dir=config.get("Parameters", "CLAIMS_DIR"),
-        logs_dir=config.get("Parameters", "LOGS_DIR"),
-        outputs_dir=config.get("Parameters", "OUTPUTS_DIR"),
+        # open_api_key="",
+        # claims_dir=config.get("Parameters", "CLAIMS_DIR"),
+        # logs_dir=config.get("Parameters", "LOGS_DIR"),
+        # outputs_dir=config.get("Parameters", "OUTPUTS_DIR"),
         # claims_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims",  # added by kapil
         # # claims_dir="ksahu_claims/",  # added by kapil
         # logs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_outputs/",  # added by kapil
