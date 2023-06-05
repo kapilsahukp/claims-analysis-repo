@@ -87,9 +87,13 @@ def main(run_id: str, claim_paths: list[str] = []) -> None:
     """
 
     # openai.api_key = open_api_key
-    CLAIMS_DIR = config.get("Parameters", "CLAIMS_DIR")
-    OUTPUTS_DIR = config.get("Parameters", "LOGS_DIR")
-    LOGS_DIR = config.get("Parameters", "OUTPUTS_DIR")
+    # CLAIMS_DIR = config.get("Parameters", "CLAIMS_DIR")
+    # OUTPUTS_DIR = config.get("Parameters", "LOGS_DIR")
+    # LOGS_DIR = config.get("Parameters", "OUTPUTS_DIR")
+    CLAIMS_DIR = parameters["CLAIMS_DIR"]
+    OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
+    LOGS_DIR = parameters["LOGS_DIR"]
+
 
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
