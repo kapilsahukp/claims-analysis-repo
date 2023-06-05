@@ -1,4 +1,5 @@
-import configparser
+# import configparser
+import json
 import logging
 import os
 
@@ -15,15 +16,23 @@ from claims_analysis_pkg.src.summarization import ClaimSummary, summarize_result
 from claims_analysis_pkg.src.utils import log_timer, read_claim, setup_logging
 
 # Create a configparser object
-config = configparser.ConfigParser()
+# config = configparser.ConfigParser()
 
 # Specify the path to the config file
-config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.ini"
+# config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.ini"
+config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.json"
 
 # Read the config file
-config.read(config_file_path)
+# config.read(config_file_path)
+with open(config_file_path, "r") as file:
+    config_data = json.load(file)
+
 # Access the parameters
-os.environ['OPENAI_API_KEY'] = config.get("Parameters", "OPENAI_API_KEY")
+# os.environ['OPENAI_API_KEY'] = config.get("Parameters", "OPENAI_API_KEY")
+
+# Access the parameters
+parameters = config_data["Parameters"]
+os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
 print(os.environ['OPENAI_API_KEY'])
 
 # ksahu added to make sure it sets neptune as root directory
@@ -38,18 +47,9 @@ print("root : ", ROOT_DIR)
 # from src.constants import THREADS
 from claims_analysis_pkg.src.constants import THREADS
 
-# from claims_analysis_pkg.src.constants import OPENAI_API_KEY
-# CLAIMS_DIR = "claims/"
-# OUTPUTS_DIR = "outputs/"
-# LOGS_DIR = "logs/"
-
-# env_path = os.path.dirname(__file__)
-# print("env path : ", env_path)
-# # Setup API key
+# Setup API key
 # load_dotenv(env_path)
 # openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# openai.api_key = OPENAI_API_KEY
 
 @log_timer
 def process_single_claim(claim_path: str) -> tuple[list[Violation], ClaimSummary]:
