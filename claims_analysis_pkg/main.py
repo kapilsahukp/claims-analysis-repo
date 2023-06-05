@@ -1,3 +1,4 @@
+import configparser
 import logging
 import os
 
@@ -13,11 +14,23 @@ from claims_analysis_pkg.src.page_processing import Violation, process_claim_pag
 from claims_analysis_pkg.src.summarization import ClaimSummary, summarize_results
 from claims_analysis_pkg.src.utils import log_timer, read_claim, setup_logging
 
+# Create a configparser object
+config = configparser.ConfigParser()
+
+# Specify the path to the config file
+config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.ini"
+
+# Read the config file
+config.read(config_file_path)
+# Access the parameters
+os.environ['OPENAI_API_KEY'] = config.get("Parameters", "OPENAI_API_KEY")
+print(os.environ['OPENAI_API_KEY'])
+
 # ksahu added to make sure it sets neptune as root directory
 abspath = os.path.abspath(__file__)
 # dname = os.path.dirname(os.path.dirname(os.path.dirname(abspath)))
 # os.chdir(dname)
-print("abspath : ",abspath)
+print("abspath : ", abspath)
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 print("root : ", ROOT_DIR)
@@ -30,11 +43,11 @@ from claims_analysis_pkg.src.constants import THREADS
 # OUTPUTS_DIR = "outputs/"
 # LOGS_DIR = "logs/"
 
-env_path = os.path.dirname(__file__)
-print("env path : ", env_path)
-# Setup API key
-load_dotenv(env_path)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# env_path = os.path.dirname(__file__)
+# print("env path : ", env_path)
+# # Setup API key
+# load_dotenv(env_path)
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # openai.api_key = OPENAI_API_KEY
 
@@ -106,10 +119,13 @@ if __name__ == "__main__":
     main(
         run_id="initial_test",
         open_api_key="",
-        claims_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims",  # added by kapil
-        # claims_dir="ksahu_claims/",  # added by kapil
-        logs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_outputs/",  # added by kapil
-        outputs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_logs/",  # added by kapil
+        claims_dir=config.get("Parameters", "CLAIMS_DIR"),
+        logs_dir=config.get("Parameters", "LOGS_DIR"),
+        outputs_dir=config.get("Parameters", "OUTPUTS_DIR"),
+        # claims_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims",  # added by kapil
+        # # claims_dir="ksahu_claims/",  # added by kapil
+        # logs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_outputs/",  # added by kapil
+        # outputs_dir="../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_logs/",  # added by kapil
         claim_paths=[
             "../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims/4_956635_Doc1.pdf" # ../../../../../ksahu_claims
             # ,  # Expect to see patio mention on page 11
