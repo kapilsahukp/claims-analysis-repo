@@ -10,7 +10,7 @@ def setup_logging(log_path: str) -> None:
     """Setups logging to save logs in log_path."""
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="[%(asctime)s] %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.FileHandler(log_path, mode="a"), logging.StreamHandler()],
