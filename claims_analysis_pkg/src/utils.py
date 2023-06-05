@@ -10,10 +10,11 @@ def setup_logging(log_path: str) -> None:
     """Setups logging to save logs in log_path."""
 
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="[%(asctime)s] %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.FileHandler(log_path, mode="a"), logging.StreamHandler()],
+        force=True,  # added by ksahu to write in gdrive as it resets any previous configuration
     )
 
 
