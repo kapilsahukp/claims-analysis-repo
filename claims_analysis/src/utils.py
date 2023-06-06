@@ -14,7 +14,7 @@ def setup_logging(log_path: str) -> None:
         format="[%(asctime)s] %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.FileHandler(log_path, mode="a"), logging.StreamHandler()],
-        force=True,  # added by ksahu to write in gdrive as it resets any previous configuration
+        force=True,  # (ksahu) added to write in gdrive as it resets any previous configuration
     )
 
 

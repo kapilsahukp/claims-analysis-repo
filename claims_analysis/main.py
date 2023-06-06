@@ -10,12 +10,12 @@ import pandas as pd
 # from src.summarization import ClaimSummary, summarize_results
 # from src.utils import log_timer, read_claim, setup_logging
 
-from claims_analysis_pkg.src.page_processing import Violation, process_claim_pages
-from claims_analysis_pkg.src.summarization import ClaimSummary, summarize_results
-from claims_analysis_pkg.src.utils import log_timer, read_claim, setup_logging
+from claims_analysis.src.page_processing import Violation, process_claim_pages
+from claims_analysis.src.summarization import ClaimSummary, summarize_results
+from claims_analysis.src.utils import log_timer, read_claim, setup_logging
 
 # from src.constants import THREADS
-from claims_analysis_pkg.src.constants import THREADS
+from claims_analysis.src.constants import THREADS
 
 # Specify the path to the config file
 config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.json"
@@ -29,6 +29,7 @@ parameters = config_data["Parameters"]
 os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
 print(os.environ['OPENAI_API_KEY'])
 
+# TODO (ksahu) remove the following code for abspath and ROOT_DIR
 # ksahu added to make sure it sets neptune as root directory
 abspath = os.path.abspath(__file__)
 print("abspath : ", abspath)
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     main(
         run_id="initial_test",
         claim_paths=[
-            "../../../../../content/gdrive/MyDrive/Colab_Notebooks/ksahu_claims/4_956635_Doc1.pdf" # ../../../../../ksahu_claims
+            "../../../../../content/gdrive/MyDrive/Colab_Notebooks/claims/4_956635_Doc1.pdf" # ../../../../../ksahu_claims
             # ,  # Expect to see patio mention on page 11
             # "claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
             # "claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
