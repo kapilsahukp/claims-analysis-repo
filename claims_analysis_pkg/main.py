@@ -1,4 +1,8 @@
 import json
+# To format table in colab
+from google.colab import data_table
+data_table.enable_dataframe_formatter()
+
 import logging
 import os
 
@@ -100,9 +104,14 @@ def main(run_id: str, claim_paths: list[str] = []) -> None:
 
     # Save the results
     output_base = os.path.join(OUTPUTS_DIR, run_id)
-    pd.DataFrame(all_violations).to_csv(output_base + "_violations.csv", index=False)
-    pd.DataFrame(all_summaries).to_csv(output_base + "_summary.csv", index=False)
+    all_violations_df = pd.DataFrame(all_violations)
+    all_summaries_df = pd.DataFrame(all_summaries)
+    all_violations_df.to_csv(output_base + "_violations.csv", index=False)
+    all_summaries_df.to_csv(output_base + "_summary.csv", index=False)
     logging.info("Done.")
+
+    all_violations_df
+    all_summaries_df
 
 
 if __name__ == "__main__":
