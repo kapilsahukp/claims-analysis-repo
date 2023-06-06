@@ -4,7 +4,6 @@ setup(
     name='claims_analysis',                     # should match the package folder
     packages=find_packages(),
     version='0.0.1',                                # important for updates
-    # license='MIT',                                  # should match the chosen license
     description='Testing installation of Package',
     author='Kapil Sahu',
     author_email='ksahu@charlesriverdata.com',
