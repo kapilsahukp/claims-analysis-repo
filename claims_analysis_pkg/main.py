@@ -110,8 +110,8 @@ def main(run_id: str, claim_paths: list[str] = []) -> None:
     all_summaries_df.to_csv(output_base + "_summary.csv", index=False)
     logging.info("Done.")
 
-    all_violations_df
-    all_summaries_df
+    print(all_violations_df)
+    print(all_summaries_df)
 
 
 if __name__ == "__main__":
