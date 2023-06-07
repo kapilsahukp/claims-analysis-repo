@@ -15,13 +15,10 @@ from claims_analysis.src.summarization import ClaimSummary, summarize_results
 from claims_analysis.src.utils import log_timer, read_claim, setup_logging
 
 # from src.constants import THREADS
-from claims_analysis.src.constants import THREADS
-
-# Specify the path to the config file
-config_file_path = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.json"
+from claims_analysis.src.constants import THREADS, CONFIG_FILE_PATH
 
 # Read the config file
-with open(config_file_path, "r") as file:
+with open(CONFIG_FILE_PATH, "r") as file:
     config_data = json.load(file)
 
 # Access the parameters

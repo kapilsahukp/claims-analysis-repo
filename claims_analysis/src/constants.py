@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+# Specify the path to the config file
+CONFIG_FILE_PATH = "../../../../../content/gdrive/MyDrive/Colab_Notebooks/config.json"
 
 # Number of threads to be used for parallel processing
 THREADS = 8
