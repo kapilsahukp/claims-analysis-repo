@@ -4,18 +4,11 @@ import os
 
 import openai
 import pandas as pd
-# from dotenv import load_dotenv
 
-# from src.page_processing import Violation, process_claim_pages
-# from src.summarization import ClaimSummary, summarize_results
-# from src.utils import log_timer, read_claim, setup_logging
-
+from claims_analysis.src.constants import CONFIG_FILE_PATH, THREADS, ExtendedCoverage
 from claims_analysis.src.page_processing import Violation, process_claim_pages
 from claims_analysis.src.summarization import ClaimSummary, summarize_results
-from claims_analysis.src.utils import log_timer, read_claim, setup_logging
-
-# from src.constants import THREADS
-from claims_analysis.src.constants import THREADS, CONFIG_FILE_PATH
+from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
 # Read the config file
 with open(CONFIG_FILE_PATH, "r") as file:
@@ -24,53 +17,57 @@ with open(CONFIG_FILE_PATH, "r") as file:
 # Access the parameters
 parameters = config_data["Parameters"]
 os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
-print(os.environ['OPENAI_API_KEY'])
 
-# TODO (ksahu) remove the following code for abspath and ROOT_DIR
-# ksahu added to make sure it sets neptune as root directory
-abspath = os.path.abspath(__file__)
-print("abspath : ", abspath)
-
-ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
-print("root : ", ROOT_DIR)
-
-# Setup API key
-# load_dotenv(env_path)
-# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @log_timer
-def process_single_claim(claim_path: str) -> tuple[list[Violation], ClaimSummary]:
+def process_single_claim(
+    claim_path: str, extended_coverages: list[ExtendedCoverage] = []
+) -> tuple[list[Violation], ClaimSummary]:
     """Read claim, get violations, and summarization for a single claim."""
 
     # Read the claim
-    pages = read_claim(claim_path)
-    # pages = read_claim(os.path.join('claims-analysis', claim_path))  # modified by ksahu
+    pages = convert_pdf_to_page_list(claim_path)
 
     # Get all violations and the page numbers queried
-    entries, pages_queried = process_claim_pages(claim_path, pages, threads=THREADS)
+    violations, pages_processed = process_claim_pages(
+        claim_path, pages, threads=THREADS, extended_coverages=extended_coverages
+    )
 
     # Summarize the information for the claim
     summary_text = (
-        summarize_results(entries) if len(entries) > 0 else "No violations found."
+        summarize_results(violations) if len(violations) > 0 else "No violations found."
     )
-    logging.info(f"Summary for {claim_path}:\n{summary_text}")
 
     claim_summary = ClaimSummary(
         filepath=claim_path,
         pages_total=len(pages),
-        pages_queried=len(pages_queried),
-        pages_flagged=len(entries),
+        pages_processed=len(pages_processed),
+        pages_flagged=len(violations),
         summary=summary_text,
     )
 
-    return entries, claim_summary
+    logging.info(f"Summary for {claim_path}:\n{summary_text}")
+
+    return violations, claim_summary
 
 
 @log_timer
-def main(run_id: str, claim_paths: list[str] = []) -> None:
-    """
-    Processes a list of claims and outputs their entries and summaries to csv files.
-    If none are provided then we run on all .pdf files in the claims directory.
+def main(
+    run_id: str,
+    claim_paths: list[str] = [],
+    extended_coverage_dict: dict[str, list[ExtendedCoverage]] = {},
+) -> None:
+    """Processes a list of claims and outputs their violations and summaries to csv files.
+
+    Main entrypoint for processing claims. First we apply the PageProcessor to identify
+    potential violations in each claim then all violations are summarized. We save the
+    violations and the summaries as .csv files.
+
+    Args:
+        run_id: id to be appended to the beginning of all outputs such as logs and csv's.
+        claim_paths: the paths of the files to be processed; if none are provided then
+            all .pdf files in the CLAIMS_DIR will be processed.
+        extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
     CLAIMS_DIR = parameters["CLAIMS_DIR"]
@@ -83,7 +80,6 @@ def main(run_id: str, claim_paths: list[str] = []) -> None:
 
     # Get list of all claims in claims directory if paths are not explicitly provided
     if not claim_paths:
-        # claim_paths = [file for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
         # (ksahu) modified to access claim files
         claim_paths = ['/'.join([CLAIMS_DIR, file]) for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
     logging.info(f"All claims to be processed: {claim_paths}.")
@@ -92,9 +88,11 @@ def main(run_id: str, claim_paths: list[str] = []) -> None:
     all_summaries: list[ClaimSummary] = []
 
     for claim_path in claim_paths:
-        entries, summary = process_single_claim(claim_path)
-        all_violations.extend(entries)
+        extended_coverages = extended_coverage_dict.get(claim_path, [])
+        violations, summary = process_single_claim(claim_path, extended_coverages)
+        all_violations.extend(violations)
         all_summaries.append(summary)
+        logging.info("---------------------------------------------\n")
 
     # Save the results
     output_base = os.path.join(OUTPUTS_DIR, run_id)
@@ -107,13 +105,21 @@ if __name__ == "__main__":
     main(
         run_id="initial_test",
         claim_paths=[
-            "../../../../../content/gdrive/MyDrive/Colab_Notebooks/claims/4_956635_Doc1.pdf" # ../../../../../ksahu_claims
-            # ,  # Expect to see patio mention on page 11
-            # "claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
-            # "claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
-            # "claims/9_958681_Doc1.pdf",  # Expect to see upper cabinets mention on page 6
-            # "claims/10_957336_Doc1.pdf",  # Expect to see upper cabinets mention on page 10
-            # "claims/18_956566_Doc1.pdf",  # Expect to see nothing since the claim is compliant
-            # "claims/20_958744_Doc1.pdf",  # Expect to see nothing since the claim is compliant
-        ]
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/2_958940_Doc1.pdf",  # Expect to see secondary property on page 2 and RCV on page 3
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/4_956635_Doc1.pdf",  # Expect to see patio mention on page 11
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/9_958681_Doc1.pdf",  # Expect to see upper cabinets mention on page 6
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/10_957336_Doc1.pdf",  # Expect to see upper cabinets mention on page 10
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/14_954806_Doc1.pdf",  # Expect to see shed with non-zero RCV on page 18
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/18_956566_Doc1.pdf",  # Expect to see nothing since the claim is compliant
+            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/20_958744_Doc1.pdf",  # Expect to see nothing since the claim is compliant
+        ],
+        # TODO (wliao): this info plus property / occupancy type should come directly from policyDB.
+        extended_coverage_dict={
+            "claims/4_956635_Doc1.pdf": [
+                ExtendedCoverage.CoverageH,
+                ExtendedCoverage.CoverageI,
+            ]
+        },
     )

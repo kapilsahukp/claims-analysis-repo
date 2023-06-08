@@ -13,8 +13,7 @@ def setup_logging(log_path: str) -> None:
         level=logging.INFO,
         format="[%(asctime)s] %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[logging.FileHandler(log_path, mode="a"), logging.StreamHandler()],
-        force=True,  # (ksahu) added to write in gdrive as it resets any previous configuration
+        handlers=[logging.FileHandler(log_path, mode="w"), logging.StreamHandler()],
     )
 
 
@@ -31,8 +30,8 @@ def log_timer(func: Callable) -> Callable:
     return wrap_func
 
 
-def read_claim(path: str) -> list[str]:
-    """Takes in file path and returns list of string where each entry is 1 page."""
+def convert_pdf_to_page_list(path: str) -> list[str]:
+    """Takes in file path and returns list of string where each string is 1 page."""
 
     reader = PdfReader(path)
     logging.info(f"Read {path} with {len(reader.pages)} pages")
@@ -44,4 +43,4 @@ def words_exist_in_text(keywords: list[str], corpus: str) -> bool:
     """Determines if at least one of the keywords exists standalone in the corpus."""
 
     pattern = "|".join(r"\b{}\b".format(word) for word in keywords)
-    return bool(re.search(pattern, corpus, re.IGNORECASE))
+    return bool(re.search(pattern, corpus, flags=re.IGNORECASE | re.DOTALL))
