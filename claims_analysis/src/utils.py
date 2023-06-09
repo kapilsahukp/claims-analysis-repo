@@ -13,7 +13,7 @@ def setup_logging(log_path: str) -> None:
         level=logging.INFO,
         format="[%(asctime)s] %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[logging.FileHandler(log_path, mode="w"), logging.StreamHandler()],
+        handlers=[logging.FileHandler(log_path, mode="a"), logging.StreamHandler()],
     )
 
 
