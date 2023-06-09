@@ -10,6 +10,11 @@ from claims_analysis.src.page_processing import Violation, process_claim_pages
 from claims_analysis.src.summarization import ClaimSummary, summarize_results
 from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
+# from src.constants import CONFIG_FILE_PATH, THREADS, ExtendedCoverage
+# from src.page_processing import Violation, process_claim_pages
+# from src.summarization import ClaimSummary, summarize_results
+# from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
+
 # Read the config file
 with open(CONFIG_FILE_PATH, "r") as file:
     config_data = json.load(file)
@@ -106,14 +111,14 @@ if __name__ == "__main__":
         run_id="initial_test",
         claim_paths=[
             "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/2_958940_Doc1.pdf",  # Expect to see secondary property on page 2 and RCV on page 3
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/4_956635_Doc1.pdf",  # Expect to see patio mention on page 11
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/9_958681_Doc1.pdf",  # Expect to see upper cabinets mention on page 6
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/10_957336_Doc1.pdf",  # Expect to see upper cabinets mention on page 10
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/14_954806_Doc1.pdf",  # Expect to see shed with non-zero RCV on page 18
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/18_956566_Doc1.pdf",  # Expect to see nothing since the claim is compliant
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/20_958744_Doc1.pdf",  # Expect to see nothing since the claim is compliant
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/4_956635_Doc1.pdf",  # Expect to see patio mention on page 11
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/9_958681_Doc1.pdf",  # Expect to see upper cabinets mention on page 6
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/10_957336_Doc1.pdf",  # Expect to see upper cabinets mention on page 10
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/14_954806_Doc1.pdf",  # Expect to see shed with non-zero RCV on page 18
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/18_956566_Doc1.pdf",  # Expect to see nothing since the claim is compliant
+            # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/20_958744_Doc1.pdf",  # Expect to see nothing since the claim is compliant
         ],
         # TODO (wliao): this info plus property / occupancy type should come directly from policyDB.
         extended_coverage_dict={
