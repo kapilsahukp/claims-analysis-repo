@@ -1,28 +1,24 @@
 import json
 import logging
 import os
+# import termios
+# from google.colab import drive
 
 import openai
 import pandas as pd
+from dotenv import load_dotenv
 
-from claims_analysis.src.constants import CONFIG_FILE_PATH, THREADS, ExtendedCoverage
-from claims_analysis.src.page_processing import Violation, process_claim_pages
-from claims_analysis.src.summarization import ClaimSummary, summarize_results
-from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
+# from claims_analysis.src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
+# from claims_analysis.src.page_processing import Violation, process_claim_pages
+# from claims_analysis.src.summarization import ClaimSummary, summarize_results
+# from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
-# from src.constants import CONFIG_FILE_PATH, THREADS, ExtendedCoverage
-# from src.page_processing import Violation, process_claim_pages
-# from src.summarization import ClaimSummary, summarize_results
-# from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
+from src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
+from src.page_processing import Violation, process_claim_pages
+from src.summarization import ClaimSummary, summarize_results
+from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
-# Read the config file
-with open(CONFIG_FILE_PATH, "r") as file:
-    config_data = json.load(file)
-
-# Access the parameters
-parameters = config_data["Parameters"]
-os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
-
+IS_CLOUD_RUN = False
 
 @log_timer
 def process_single_claim(
@@ -58,6 +54,7 @@ def process_single_claim(
 
 @log_timer
 def main(
+    is_cloud_run: bool,
     run_id: str,
     claim_paths: list[str] = [],
     extended_coverage_dict: dict[str, list[ExtendedCoverage]] = {},
@@ -75,9 +72,33 @@ def main(
         extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
-    CLAIMS_DIR = parameters["CLAIMS_DIR"]
-    OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
-    LOGS_DIR = parameters["LOGS_DIR"]
+    IS_CLOUD_RUN = is_cloud_run
+
+    if IS_CLOUD_RUN:
+
+        # Mount the google drive:
+        drive.mount('/content/gdrive', force_remount=True)
+
+        # Read the config file
+        with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
+            config_data = json.load(file)
+
+        # Setup API key from GDrive config.json file
+        parameters = config_data["Parameters"]
+        os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
+
+        CLAIMS_DIR = parameters["CLAIMS_DIR"]
+        OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
+        LOGS_DIR = parameters["LOGS_DIR"]
+
+    else:
+        CLAIMS_DIR = "claims/"
+        OUTPUTS_DIR = "outputs/"
+        LOGS_DIR = "logs/"
+
+        # Setup API key locally
+        load_dotenv()
+        openai.api_key = os.getenv("OPENAI_API_KEY")
 
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
@@ -108,9 +129,10 @@ def main(
 
 if __name__ == "__main__":
     main(
+        is_cloud_run=False,
         run_id="initial_test",
         claim_paths=[
-            "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/2_958940_Doc1.pdf",  # Expect to see secondary property on page 2 and RCV on page 3
+            "claims/4_956635_Doc1.pdf",  # Expect to see secondary property on page 2 and RCV on page 3
             # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/4_956635_Doc1.pdf",  # Expect to see patio mention on page 11
             # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/7_955932_Doc1.pdf",  # Expect to see pool issue on page 140
             # "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/claims/8_956437_Doc1.pdf",  # Expect to see pool mention on page 38
