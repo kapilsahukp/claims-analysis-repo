@@ -83,13 +83,19 @@ def main(
         with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
             config_data = json.load(file)
 
+        print("SUccessful GDRIVE_CONFIG_FILE_PATH")
+
         # Setup API key from GDrive config.json file
         parameters = config_data["Parameters"]
         os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
 
+        print("API KEY Successful")
+
         CLAIMS_DIR = parameters["CLAIMS_DIR"]
         OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
         LOGS_DIR = parameters["LOGS_DIR"]
+
+        print()
 
     else:
         CLAIMS_DIR = "claims/"

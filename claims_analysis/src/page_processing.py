@@ -66,7 +66,7 @@ class PageProcessor:
                 Closer to 0 makes the response more deterministic.
         """
         self.chat = ChatOpenAI(
-            temperature=temperature, model_name="gpt-3.5-turbo", client=None
+            temperature=temperature, model_name="gpt-3.5-turbo", client=None, request_timeout=120
         )
 
         # Construct the base system message from the relevant violation types and save the keywords
