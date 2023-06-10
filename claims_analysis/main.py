@@ -77,7 +77,7 @@ def main(
     if IS_CLOUD_RUN:
 
         # Mount the google drive:
-        drive.mount('/content/gdrive', force_remount=True)
+        # drive.mount('/content/gdrive', force_remount=True)
 
         # Read the config file
         with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
