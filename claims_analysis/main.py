@@ -2,7 +2,7 @@ import json
 import logging
 import os
 # import termios
-# from google.colab import drive
+from google.colab import drive
 
 import openai
 import pandas as pd
@@ -77,7 +77,7 @@ def main(
     if IS_CLOUD_RUN:
 
         # Mount the google drive:
-        # drive.mount('/content/gdrive', force_remount=True)
+        drive.mount('/content/gdrive', force_remount=True)
 
         # Read the config file
         with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
@@ -95,7 +95,7 @@ def main(
         OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
         LOGS_DIR = parameters["LOGS_DIR"]
 
-        print()
+        print("Paths accepted from config")
 
     else:
         CLAIMS_DIR = "claims/"
