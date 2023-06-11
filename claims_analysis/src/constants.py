@@ -4,7 +4,7 @@ from typing import Optional
 
 # Specify the path to the config file
 # GDRIVE_CONFIG_FILE_PATH = "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/config.json"
-GDRIVE_CONFIG_FILE_PATH = "/content/gdrive/MyDrive/Claims_Analysis_Directory/config.json"
+GDRIVE_CONFIG_FILE_PATH = "content/gdrive/MyDrive/Claims_Analysis_Directory/config.json"
 
 # Number of threads for processing pages within a single claim
 THREADS = 8

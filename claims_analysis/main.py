@@ -2,7 +2,7 @@ import json
 import logging
 import os
 # import termios
-from google.colab import drive
+# from google.colab import drive
 
 import openai
 import pandas as pd
@@ -18,7 +18,38 @@ from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup
 # from src.summarization import ClaimSummary, summarize_results
 # from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
-IS_CLOUD_RUN = False
+CLAIMS_DIR = "claims/"
+OUTPUTS_DIR = "outputs/"
+LOGS_DIR = "logs/"
+
+@log_timer
+def configure_file_paths(is_cloud_run: bool):
+    """Configure OPENAI_API_KEY, Claims, Outputs and Logs folder paths."""
+
+    if is_cloud_run:
+
+        logging.info("Executed from Google Colab")
+
+        # Read the config file
+        with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
+            config_data = json.load(file)
+        parameters = config_data["Parameters"]
+
+        # Setup API key from GDrive config.json file
+        os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
+
+        # Setup Claims, Outputs and Logs file paths from GDrive config.json file
+        CLAIMS_DIR = parameters["CLAIMS_DIR"]
+        OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
+        LOGS_DIR = parameters["LOGS_DIR"]
+
+    else:
+        logging.info("Executed locally")
+
+        # Setup API key locally
+        load_dotenv()
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 @log_timer
 def process_single_claim(
@@ -72,48 +103,16 @@ def main(
         extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
-    IS_CLOUD_RUN = is_cloud_run
-
-    if IS_CLOUD_RUN:
-
-        # Mount the google drive:
-        # drive.mount('/content/gdrive', force_remount=True)
-
-        # Read the config file
-        with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
-            config_data = json.load(file)
-
-        print("SUccessful GDRIVE_CONFIG_FILE_PATH")
-
-        # Setup API key from GDrive config.json file
-        parameters = config_data["Parameters"]
-        os.environ['OPENAI_API_KEY'] = parameters["OPENAI_API_KEY"]
-
-        print("API KEY Successful")
-
-        CLAIMS_DIR = parameters["CLAIMS_DIR"]
-        OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
-        LOGS_DIR = parameters["LOGS_DIR"]
-
-        print("Paths accepted from config")
-
-    else:
-        CLAIMS_DIR = "claims/"
-        OUTPUTS_DIR = "outputs/"
-        LOGS_DIR = "logs/"
-
-        # Setup API key locally
-        load_dotenv()
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
     logging.info(f"Starting run {run_id}...")
 
+    configure_file_paths(is_cloud_run)
+
     # Get list of all claims in claims directory if paths are not explicitly provided
     if not claim_paths:
         # (ksahu) modified to access claim files
-        claim_paths = ['/'.join([CLAIMS_DIR, file]) for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
+        claim_paths = [os.path.join(CLAIMS_DIR, file) for file in os.listdir(CLAIMS_DIR) if file.endswith(".pdf")]
     logging.info(f"All claims to be processed: {claim_paths}.")
 
     all_violations: list[Violation] = []
