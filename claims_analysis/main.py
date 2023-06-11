@@ -28,8 +28,6 @@ def configure_file_paths(is_cloud_run: bool):
 
     if is_cloud_run:
 
-        logging.info("Executed from Google Colab")
-
         # Read the config file
         with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
             config_data = json.load(file)
@@ -44,7 +42,6 @@ def configure_file_paths(is_cloud_run: bool):
         LOGS_DIR = parameters["LOGS_DIR"]
 
     else:
-        logging.info("Executed locally")
 
         # Setup API key locally
         load_dotenv()
@@ -103,11 +100,11 @@ def main(
         extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
+    configure_file_paths(is_cloud_run)
+
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
     logging.info(f"Starting run {run_id}...")
-
-    configure_file_paths(is_cloud_run)
 
     # Get list of all claims in claims directory if paths are not explicitly provided
     if not claim_paths:
