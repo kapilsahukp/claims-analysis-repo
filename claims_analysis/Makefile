@@ -1,3 +1,4 @@
+# To test linting
 .PHONY: lint
 
 lint:
