@@ -8,23 +8,25 @@ import openai
 import pandas as pd
 from dotenv import load_dotenv
 
-from claims_analysis.src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
-from claims_analysis.src.page_processing import Violation, process_claim_pages
-from claims_analysis.src.summarization import ClaimSummary, summarize_results
-from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
+# from claims_analysis.src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
+# from claims_analysis.src.page_processing import Violation, process_claim_pages
+# from claims_analysis.src.summarization import ClaimSummary, summarize_results
+# from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
-# from src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
-# from src.page_processing import Violation, process_claim_pages
-# from src.summarization import ClaimSummary, summarize_results
-# from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
+from src.constants import GDRIVE_CONFIG_FILE_PATH, THREADS, ExtendedCoverage
+from src.page_processing import Violation, process_claim_pages
+from src.summarization import ClaimSummary, summarize_results
+from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
-CLAIMS_DIR = "claims/"
-OUTPUTS_DIR = "outputs/"
-LOGS_DIR = "logs/"
+CLAIMS_DIR = None
+OUTPUTS_DIR = None
+LOGS_DIR = None
 
 @log_timer
-def configure_file_paths(is_cloud_run: bool):
+def __configure_file_paths(is_cloud_run: bool):
     """Configure OPENAI_API_KEY, Claims, Outputs and Logs folder paths."""
+
+    global CLAIMS_DIR, OUTPUTS_DIR, LOGS_DIR
 
     if is_cloud_run:
 
@@ -46,6 +48,10 @@ def configure_file_paths(is_cloud_run: bool):
         # Setup API key locally
         load_dotenv()
         openai.api_key = os.getenv("OPENAI_API_KEY")
+
+        CLAIMS_DIR = "claims/"
+        OUTPUTS_DIR = "outputs/"
+        LOGS_DIR = "logs/"
 
 
 @log_timer
@@ -94,13 +100,14 @@ def main(
     violations and the summaries as .csv files.
 
     Args:
+        is_cloud_run:  True in case the execution started from the Google Colab Notebook, otherwise False.
         run_id: id to be appended to the beginning of all outputs such as logs and csv's.
         claim_paths: the paths of the files to be processed; if none are provided then
             all .pdf files in the CLAIMS_DIR will be processed.
         extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
-    configure_file_paths(is_cloud_run)
+    __configure_file_paths(is_cloud_run)
 
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
