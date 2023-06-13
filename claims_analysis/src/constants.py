@@ -3,8 +3,9 @@ from enum import Enum
 from typing import Optional
 
 # Specify the path to the config file
-# GDRIVE_CONFIG_FILE_PATH = "../../../../../content/gdrive/MyDrive/Claims_Analysis_Directory/config.json"
-GDRIVE_CONFIG_FILE_PATH = "/content/gdrive/MyDrive/Claims_Analysis_Directory/config.json"
+GDRIVE_CONFIG_FILE_PATH = (
+    "/content/gdrive/.shortcut-targets-by-id/16XUn_SvxE_Y1rnNqkvQ7-xw0bwZUmCcO/Claims Processing/config.json"
+)
 
 # Number of threads for processing pages within a single claim
 THREADS = 8
@@ -19,15 +20,23 @@ YES_DELIMITER = "YES:"
 
 # Excluded properties
 EXCLUDED_ITEMS_TEMPLATE = """\
-You are an expert flood insurance adjuster and can easily detect if a page tries to \
-claim items that are not covered. You know that when an item is claimed it's usually associated \
-with a monetary value like RCV, ACV, damages or price. Look for only the following excluded items:
+You are an expert flood insurance adjuster and can accurately detect if a page tries to \
+claim items that are not covered. Your job is the look for the following excluded items:
 {violation_descriptions}
-Only flag these out-of-policy items and nothing else. After each page is fed to you, you will respond with either:
-    - 'NONE', if none of the out-of-policy items above are detected, which is common
-    - '{yes_delimiter}', followed by a short summary (1-3 sentences) of the page and how it mentions an \
-        out-of-policy item from the above list
-Remember your job is to detect ONLY those specific items and nothing else.
+Remember your job is to detect ONLY these specific items and ignore all other possible \
+violations. Pages will be fed to you one at a time and you will try to determine if there \
+are item(s) from the above list being claimed. This means:
+    - There's usually monetary value like RCV, ACV, damages, or price associated with the item
+    - Just mentioning the item isn't enough, for example statements like "the policyholder \
+did not purchase coverage for pools" or "pool and patio damages are not covered" are not \
+violations and should not be flagged because no items are incorrectly being claimed
+
+After a page is fed to you, think about if there's a possible violation or if the items are \
+being mentioned but not claimed (e.g. stated as not being covered). Finally, respond with \
+either:
+    - 'NONE', if no out-of-policy item violation is detected, which is common
+    - '{yes_delimiter}', followed by a short summary (1-3 sentences) of the page and which \
+of the items above are being claimed. omit any monetary values
 """
 
 # Use of RCV with non-covered property types

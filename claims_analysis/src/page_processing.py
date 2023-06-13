@@ -6,19 +6,6 @@ from typing import Optional
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
-# from src.constants import (
-#     EXCLUDED_ITEMS_TEMPLATE,
-#     EXCLUDED_ITEMS_VIOLATION_TYPES,
-#     GLOBAL_EXCLUDED_KEYWORDS,
-#     RCV_PROPERTY_TEMPLATE,
-#     RCV_PROPERTY_VIOLATION_TYPES,
-#     YES_DELIMITER,
-#     ExtendedCoverage,
-#     ViolationType,
-# )
-# from src.utils import words_exist_in_text
-
-
 from claims_analysis.src.constants import (
     EXCLUDED_ITEMS_TEMPLATE,
     EXCLUDED_ITEMS_VIOLATION_TYPES,
@@ -66,7 +53,7 @@ class PageProcessor:
                 Closer to 0 makes the response more deterministic.
         """
         self.chat = ChatOpenAI(
-            temperature=temperature, model_name="gpt-3.5-turbo", client=None, request_timeout=120
+            temperature=temperature, model_name="gpt-3.5-turbo", client=None
         )
 
         # Construct the base system message from the relevant violation types and save the keywords
