@@ -30,7 +30,7 @@ LOGS_DIR = None
 
 
 @log_timer
-def __configure_file_paths(is_cloud_run: bool):
+def __configure_file_paths(is_cloud_run: bool, config_data_parameters: dict):
     """Configure OPENAI_API_KEY, Claims, Outputs and Logs folder paths
 
     Args:
@@ -40,17 +40,17 @@ def __configure_file_paths(is_cloud_run: bool):
 
     if is_cloud_run:
         # Read the config file
-        with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
-            config_data = json.load(file)
-        parameters = config_data["Parameters"]
+        # with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
+        #     config_data = json.load(file)
+        # parameters = config_data["Parameters"]
 
         # Setup API key from GDrive config.json file
-        os.environ["OPENAI_API_KEY"] = parameters["OPENAI_API_KEY"]
+        os.environ["OPENAI_API_KEY"] = config_data_parameters["OPENAI_API_KEY"]
 
         # Setup Claims, Outputs and Logs file paths from GDrive config.json file
-        CLAIMS_DIR = parameters["CLAIMS_DIR"]
-        OUTPUTS_DIR = parameters["OUTPUTS_DIR"]
-        LOGS_DIR = parameters["LOGS_DIR"]
+        CLAIMS_DIR = config_data_parameters["CLAIMS_DIR"]
+        OUTPUTS_DIR = config_data_parameters["OUTPUTS_DIR"]
+        LOGS_DIR = config_data_parameters["LOGS_DIR"]
 
     else:
         # Setup API key locally
@@ -98,6 +98,7 @@ def process_single_claim(
 @log_timer
 def main(
     is_cloud_run: bool,
+    config_data_parameters: dict,
     run_id: str,
     claim_paths: list[str] = [],
     extended_coverage_dict: dict[str, list[ExtendedCoverage]] = {},
@@ -116,7 +117,7 @@ def main(
         extended_coverage_dict: mapping from claims_path to extended coverages that were purchased
     """
 
-    __configure_file_paths(is_cloud_run)
+    __configure_file_paths(is_cloud_run, config_data_parameters)
 
     log_path = os.path.join(LOGS_DIR, run_id + ".log")
     setup_logging(log_path=log_path)
@@ -151,6 +152,12 @@ def main(
 if __name__ == "__main__":
     main(
         is_cloud_run=False,
+        config_data_parameters={
+                # insert key
+                "CLAIMS_DIR": "content/gdrive/MyDrive/Claims Processing/claims",
+                "LOGS_DIR": "content/gdrive/MyDrive/Claims Processing/logs",
+                "OUTPUTS_DIR": "content/gdrive/MyDrive/Claims Processing/outputs"
+        },
         run_id="initial_test",
         claim_paths=[
             "claims/2_958940_Doc1.pdf",  # Expect to see secondary property on page 2 and RCV on page 3
