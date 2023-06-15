@@ -6,7 +6,7 @@ from typing import Optional
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
-from claims_analysis.src.constants import (
+from claims_analysis.constants import (
     EXCLUDED_ITEMS_TEMPLATE,
     EXCLUDED_ITEMS_VIOLATION_TYPES,
     GLOBAL_EXCLUDED_KEYWORDS,
@@ -18,7 +18,7 @@ from claims_analysis.src.constants import (
     ExtendedCoverage,
     ViolationType,
 )
-from claims_analysis.src.utils import words_exist_in_text
+from claims_analysis.utils import words_exist_in_text
 
 
 @dataclass
