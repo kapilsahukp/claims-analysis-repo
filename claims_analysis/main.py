@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -7,22 +6,12 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from claims_analysis.src.constants import (
-    GDRIVE_CONFIG_FILE_PATH,
     THREADS,
     ExtendedCoverage,
 )
 from claims_analysis.src.page_processing import Violation, process_claim_pages
 from claims_analysis.src.summarization import ClaimSummary, summarize_results
 from claims_analysis.src.utils import convert_pdf_to_page_list, log_timer, setup_logging
-
-# from src.constants import (
-#     GDRIVE_CONFIG_FILE_PATH,
-#     THREADS,
-#     ExtendedCoverage,
-# )
-# from src.page_processing import Violation, process_claim_pages
-# from src.summarization import ClaimSummary, summarize_results
-# from src.utils import convert_pdf_to_page_list, log_timer, setup_logging
 
 CLAIMS_DIR = None
 OUTPUTS_DIR = None
@@ -35,19 +24,16 @@ def __configure_file_paths(is_cloud_run: bool, config_data_parameters: dict):
 
     Args:
         is_cloud_run (bool): True in case the execution started from the Google Colab Notebook, otherwise False.
+        config_data_parameters (dict): A dictionary containing OPENAI_API_KEY, Claims, Outputs and Logs folder paths.
     """
     global CLAIMS_DIR, OUTPUTS_DIR, LOGS_DIR
 
     if is_cloud_run:
-        # Read the config file
-        # with open(GDRIVE_CONFIG_FILE_PATH, "r") as file:
-        #     config_data = json.load(file)
-        # parameters = config_data["Parameters"]
 
-        # Setup API key from GDrive config.json file
+        # Setup API key passed as a parameter from colab notebook
         os.environ["OPENAI_API_KEY"] = config_data_parameters["OPENAI_API_KEY"]
 
-        # Setup Claims, Outputs and Logs file paths from GDrive config.json file
+        # Setup Claims, Outputs and Logs file paths passed as a parameter from colab notebook
         CLAIMS_DIR = config_data_parameters["CLAIMS_DIR"]
         OUTPUTS_DIR = config_data_parameters["OUTPUTS_DIR"]
         LOGS_DIR = config_data_parameters["LOGS_DIR"]
@@ -111,6 +97,7 @@ def main(
 
     Args:
         is_cloud_run: True in case the execution started from the Google Colab Notebook, otherwise False.
+        config_data_parameters: A dictionary containing OPENAI_API_KEY, Claims, Outputs and Logs folder paths.
         run_id: id to be appended to the beginning of all outputs such as logs and csv's.
         claim_paths: the paths of the files to be processed; if none are provided then
             all .pdf files in the CLAIMS_DIR will be processed.
@@ -153,10 +140,10 @@ if __name__ == "__main__":
     main(
         is_cloud_run=False,
         config_data_parameters={
-                # insert key
-                "CLAIMS_DIR": "content/gdrive/MyDrive/Claims Processing/claims",
-                "LOGS_DIR": "content/gdrive/MyDrive/Claims Processing/logs",
-                "OUTPUTS_DIR": "content/gdrive/MyDrive/Claims Processing/outputs"
+            "OPENAI_API_KEY": "",      # Will be set during cloud run
+            "CLAIMS_DIR": "claims/",   # Will be set during cloud run
+            "LOGS_DIR": "logs/",       # Will be set during cloud run
+            "OUTPUTS_DIR": "outputs/"  # Will be set during cloud run
         },
         run_id="initial_test",
         claim_paths=[

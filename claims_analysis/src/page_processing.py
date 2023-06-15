@@ -10,6 +10,8 @@ from claims_analysis.src.constants import (
     EXCLUDED_ITEMS_TEMPLATE,
     EXCLUDED_ITEMS_VIOLATION_TYPES,
     GLOBAL_EXCLUDED_KEYWORDS,
+    PAIR_CLAUSE_TEMPLATE,
+    PAIR_CLAUSE_VIOLATION_TYPES,
     RCV_PROPERTY_TEMPLATE,
     RCV_PROPERTY_VIOLATION_TYPES,
     YES_DELIMITER,
@@ -137,10 +139,12 @@ def process_claim_pages(
     processors: list[PageProcessor] = []
 
     for prompt_template, viol_types in [
-        # For excluded items (pool, patio, upper cabinets)
+        # For excluded items (pool, patio)
         (EXCLUDED_ITEMS_TEMPLATE, EXCLUDED_ITEMS_VIOLATION_TYPES),
         # For RCV with non-covered properties
         (RCV_PROPERTY_TEMPLATE, RCV_PROPERTY_VIOLATION_TYPES),
+        # For items covered under the pair and set clause
+        (PAIR_CLAUSE_TEMPLATE, PAIR_CLAUSE_VIOLATION_TYPES),
     ]:
         if filt_types := _filter_violation_types(viol_types, extended_coverages):
             processors.append(
